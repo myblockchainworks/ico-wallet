@@ -1,0 +1,35 @@
+.scrollable{
+width: 100%; /* default width of scrollable content in px or percentage */
+height: 270px; /* default height of scrollable content */
+border: none;
+overflow: hidden; /* keep this */
+position: relative; /* keep this */
+}
+
+.scrollable .belt{ /* default style of inner scrollable DIV */
+width: 100%;
+position:absolute;
+left: 0;
+top: 0;
+padding: 0 5px;
+-webkit-box-sizing: border-box;
+-moz-box-sizing: border-box;
+box-sizing: border-box;
+}
+
+.scrollable .belt.horizontal{ /* default horizontal specific style of inner scrollable DIV */
+width: auto; /* set to auto or an explicit px value large enough to accomodate entire horizontal content */
+height: 100%;
+/* white-space: nowrap; */   /* prevent wrapping inside DIV. Uncomment if embedding images or regular text content inside horizontal belt diV */
+}
+
+article.columns{ /* demo CSS to create columns of content inside horizontal scrollable */
+width: 800px; /* See http://www.javascriptkit.com/dhtmltutors/css3columns.shtml */
+-moz-column-width: 150px;
+-webkit-column-width: 150px;
+column-width: 150px;
+}
+
+article.columns > p:first-of-type{
+margin-top: 0;
+}
