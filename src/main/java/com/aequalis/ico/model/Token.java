@@ -47,6 +47,14 @@ public class Token  implements Serializable {
 	@Column(name = "tokenprice") 
 	private Integer tokenprice;
 	
+	@Column(name="starttime")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date starttime;
+	
+	@Column(name="endtime")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date endtime;
+	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "userid")
 	private User user;
@@ -178,6 +186,34 @@ public class Token  implements Serializable {
 	}
 
 	/**
+	 * @return the starttime
+	 */
+	public Date getStarttime() {
+		return starttime;
+	}
+
+	/**
+	 * @param starttime the starttime to set
+	 */
+	public void setStarttime(Date starttime) {
+		this.starttime = starttime;
+	}
+
+	/**
+	 * @return the endtime
+	 */
+	public Date getEndtime() {
+		return endtime;
+	}
+
+	/**
+	 * @param endtime the endtime to set
+	 */
+	public void setEndtime(Date endtime) {
+		this.endtime = endtime;
+	}
+
+	/**
 	 * @param createdon the createdon to set
 	 */
 	public void setCreatedon(Date createdon) {
@@ -190,8 +226,8 @@ public class Token  implements Serializable {
 	@Override
 	public String toString() {
 		return "Token [tokenid=" + tokenid + ", name=" + name + ", symbol=" + symbol + ", decimals=" + decimals
-				+ ", initialsupply=" + initialsupply + ", tokenprice=" + tokenprice + ", user=" + user + ", address="
-				+ address + ", createdon=" + createdon + "]";
+				+ ", initialsupply=" + initialsupply + ", tokenprice=" + tokenprice + ", starttime=" + starttime
+				+ ", endtime=" + endtime + ", user=" + user + ", address=" + address + ", createdon=" + createdon + "]";
 	}
 	
 }

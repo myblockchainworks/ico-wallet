@@ -81,9 +81,6 @@
 						<li><div class="tex">
 								<h2>${currentUser.fullname}</h2>
 							</div>
-							<div style="float:left;padding-top: 15px;padding-right: 12px;">
-								My Balance : ${myBalance} ETH
-							</div>
 						</li>
 					</ul>
 					
@@ -97,12 +94,15 @@
 						My Wallet</a></li>
 				<li><a href="sendether"><i class="fa fa-paper-plane" aria-hidden="true"></i>
 						Send Ether</a></li>
-				<li><a href="tokens"><i class="fa fa-money" aria-hidden="true"></i>
+				<li class="active"><a href="tokens"><i class="fa fa-money" aria-hidden="true"></i>
 						Tokens</a></li>
 					<li><a href="transactions"><i class="fa fa-tasks" aria-hidden="true"></i>
 						My Transactions</a></li>
-				<li class="active"><a href="#"><i class="fa fa-user" aria-hidden="true"></i>
+				<li><a href="myprofile"><i class="fa fa-user" aria-hidden="true"></i>
 						My Profile</a></li>
+				
+				<!-- <li><a href="#"><i class="fa fa-usd" aria-hidden="true"></i>
+						Funds</a></li> -->
 				<li><a href="logout"><i class="fa fa-sign-out"
 						aria-hidden="true"></i> Logout</a></li>
 
@@ -111,63 +111,63 @@
 		</nav>
 		
 		<div class="container" style="padding-top: 50px;">
+			<div class="errorMessageDiv"><script>showErrorMessage('<c:out value='${param.errormsg}'/>')</script></div>
+			<div class="successMessageDiv"><script>showSuccessMessage('<c:out value='${param.successmsg}'/>')</script></div>
 			<div class="row">
 		   		<div class="col-lg-12">
 		   			<div class="breadcrumb">
 						<div class="panel panel-info" >
 							<div class="panel-heading">
-			                   	<div class="panel-title">My Profile</div>
-			               	</div>
-			               	<div class="panel-body">
-			
-								<div class="form-inline">
-									<label for="name" style="width: 250px;">Name</label> : <label for="name" style="font-weight: normal;">
-										${currentUser.fullname }</label>
-								</div>
-				
-								<div class="form-inline">
-									<label for="user_name" style="width: 250px;">User Name</label> : <label for="name" style="font-weight: normal;">
-										${currentUser.username }</label>
-								</div>
-								
-								<div class="form-inline">
-									<label for="name" style="width: 250px;">Current Balance</label> : <label for="name" style="font-weight: normal;">
-										${myBalance } ETH</label>
-								</div>
-								
-								
-								<div class="form-inline">
-									<label for="user_name" style="width: 250px;">Public Address</label> : <label for="name" style="font-weight: normal;">
-										${currentUser.bcaddress }</label>
-								</div>
-								
-								<div class="form-inline">
-									<label for="user_name" style="width: 250px;">Private Address</label> : <label for="name" style="font-weight: normal;" id="privatekey">
-										${currentUser.privatekey }</label>
-									<input type="hidden" name="keystoreJson" id="keystoreJson" value="${currentUser.keystore}">
-								</div>
-				
-								<div class="form-inline">
-									<label for="number" style="width: 250px;">Contact Number</label> : <label for="name" style="font-weight: normal;">
-										${currentUser.contactnumber }</label>
-								</div>
-								<div class="form-inline">
-									<label for="email" style="width: 250px;">Email</label> : <label for="name" style="font-weight: normal;">
-										${currentUser.email }</label>
-								</div>
-								<div class="form-inline">
-									<label for="download" style="width: 250px;">Download</label> : <label for="name" style="font-weight: normal;">
-										<a href="#" onclick="downloadKeyStore()" style="cursor: pointer;">Keystore File</a></label>
-									
-								</div>
+		                     	<div class="panel-title">Increase Token Supply</div>
+		                 	</div>
+		                 	<div class="panel-body">
+		                 		<form class="form-horizontal" role="form" action="additionalTokenSupply" method="post" id="addAdditionalTokenForm">
+		                 			<div class="form-group">
+										<div class="col-sm-3">
+											<span>Token</span> 
+										</div>
+										<div class="col-sm-6">
+											<input type="text" id="tokenname" name="tokenname"
+													placeholder="e.g., Test Token" class="form-control" value="${tokenName}" readonly="readonly">
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-3">
+											<span>Current Balance</span> 
+										</div>
+										<div class="col-sm-6">
+											<input type="text" id="balance" name="balance"
+													placeholder="e.g., 1000" class="form-control" value="${balance}" readonly="readonly">
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="col-sm-3">
+											<span>Additional Token Supply</span>
+										</div>
+										<div class='col-sm-6'>
+											<input type="number" id="tokensupply" name="tokensupply"
+													placeholder="e.g., 500000" class="form-control" required>
+										</div>
+		
+									</div>
+									<div class="form-group">
+										<div class="col-sm-8">
+											
+										</div>
+										<div class='col-sm-2'>
+											<input type="hidden" id="tokenid" name="tokenid" value="${tokenId}">
+											<input type="hidden" id="tokenaddress" name="tokenaddress" value="${tokenAddress}">
+											<input type="button" value="Update" onclick="addAdditionTokenConfirmation();">
+											<!-- <button>Send</button> -->
+										</div>
+									</div>
+		                 		</form>
 							</div>
-			             </div>
+	                 	</div>
 					</div>
-				</div>
+		   		</div>
 			</div>
 		</div> 
-
 	</div>
-
 </body>
 </html>

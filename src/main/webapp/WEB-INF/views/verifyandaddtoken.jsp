@@ -49,7 +49,7 @@
 		<ul class="nav navbar-left top-nav">
 			<div class="row">
 				<div class="col-sm-6">
-					<div class="search">
+					<!-- <div class="search">
 
 						<div class="input-group col-md-12">
 							<form class="navbar-form" role="search">
@@ -69,7 +69,7 @@
 
 
 
-					</div>
+					</div> -->
 				</div>
 				<div class="col-sm-6">
 					<ul class="top_hed pull-right">
@@ -143,7 +143,7 @@
 
 									</div>
 									
-									<div class="col-sm-6">
+									<div class="col-sm-6" style="display: none;">
 										<label>Decimals</label> <input type="number" id="decimals" name="decimals"
 											placeholder="e.g., 8" class="form-control" min="1" max="18" readonly="readonly" value="${token.decimals }">
 									</div>

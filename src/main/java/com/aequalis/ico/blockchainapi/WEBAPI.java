@@ -39,7 +39,7 @@ public interface WEBAPI {
 	
 	static String CREATETOKEN = "createToken";
 	
-	static String CREATETOKEN_DATA = "{  \"_name\": \"PARAM1\", \"_symbol\": \"PARAM2\", \"_decimals\": \"PARAM3\", \"_initialSupply\": PARAM4, \"_tokenPrice\" : \"PARAM5\", \"_tokenOwner\" : \"PARAM6\"}";
+	static String CREATETOKEN_DATA = "{  \"_name\": \"PARAM1\", \"_symbol\": \"PARAM2\", \"_decimals\": PARAM3, \"_initialSupply\": PARAM4, \"_tokenPrice\" : PARAM5, \"_tokenOwner\" : \"PARAM6\", \"_startTime\" : PARAM7, \"_endTime\" : PARAM8}";
 	
 	static String BUYTOKEN = "buyToken";
 	
@@ -48,4 +48,12 @@ public interface WEBAPI {
 	static String SENDETHER = "sendEther";
 	
 	static String SENDETHER_DATA = "{  \"_fromaddress\": \"PARAM1\", \"_privatekey\": \"PARAM2\", \"_amount\": PARAM3, \"_toAddress\" : \"PARAM4\" }";
+	
+	static String FUNDRAISED = "fundRaised";
+	
+	static String FUNDRAISED_DATA = "{  \"_tokenAddress\": \"PARAM1\" }";
+	
+	static String INCREASETOKENSUPPLY = "increaseTokenSupply";
+	
+	static String INCREASETOKENSUPPLY_DATA = "{  \"_tokenAddress\": \"PARAM1\", \"_additionalSupply\" : PARAM2 }";
 }

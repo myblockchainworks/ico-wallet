@@ -49,7 +49,7 @@
 		<ul class="nav navbar-left top-nav">
 			<div class="row">
 				<div class="col-sm-6">
-					<div class="search">
+					<!-- <div class="search">
 
 						<div class="input-group col-md-12">
 							<form class="navbar-form" role="search">
@@ -69,7 +69,7 @@
 
 
 
-					</div>
+					</div> -->
 				</div>
 				<div class="col-sm-6">
 					<ul class="top_hed pull-right">
@@ -124,11 +124,14 @@
 		                 		<table id="products" class="table table-bordered table-hover">
 									<tr>
 										<th>#</th>
-										<th>Created Date</th> 
+										<!-- <th>Created Date</th>  -->
 										<th>Address</th> 
 										<th>Name</th> 
-										<th>Symbol</th> 
+										<th>Price (1 ETH)</th>
 										<th>Balance</th>
+										<th>Start Time</th>
+										<th>End Time</th>
+										<th>Fund Raised</th>
 										<th>Action</th>
 									</tr>
 									<c:set var="count" value="0" scope="page" />
@@ -136,12 +139,15 @@
 										<c:set var="count" value="${count + 1}" scope="page"/>
 										<tr>
 											<td>${count}</td>
-											<td class="createdon${count}"><script>formatAndDisplayDate('<c:out value='${token.token.createdon}'/>', 'createdon' + '<c:out value='${count}'/>');</script></td>
+											<%-- <td class="createdon${count}"><script>formatAndDisplayDate('<c:out value='${token.token.createdon}'/>', 'createdon' + '<c:out value='${count}'/>');</script></td> --%>
 											<td>${token.token.address}</td>
-											<td>${token.token.name}</td>
-											<td>${token.token.symbol}</td>
+											<td>${token.token.name} (${token.token.symbol})</td>
+											<td>${token.token.tokenprice} ${token.token.symbol}</td>
 											<td>${token.balance}</td>
-											<td class="sendtoken${count}"><script>showSendAction('<c:out value='${token.token.tokenid}'/>', 'sendtoken' + '<c:out value='${count}'/>', '<c:out value='${currentUser.bcaddress}'/>')</script>
+											<td class="starttime${count}"><script>formatAndDisplayDate('<c:out value='${token.token.starttime}'/>', 'starttime' + '<c:out value='${count}'/>');</script></td>
+											<td class="endtime${count}"><script>formatAndDisplayDate('<c:out value='${token.token.endtime}'/>', 'endtime' + '<c:out value='${count}'/>');</script></td>
+											<td>${token.fundRaised} ETH </td>
+											<td class="sendtoken${count}"><script>showSendAction('<c:out value='${token.token.tokenid}'/>', 'sendtoken' + '<c:out value='${count}'/>', '<c:out value='${token.balance}'/>')</script>
 										</tr>
 									</c:forEach>
 								</table>
@@ -162,8 +168,10 @@
 										<th>#</th>
 										<th>Address</th> 
 										<th>Name</th> 
-										<th>Symbol</th> 
+										<th>Price (1 ETH)</th>
 										<th>Balance</th>
+										<th>Start Time</th>
+										<th>End Time</th>
 										<th>Action</th>
 									</tr>
 									<c:set var="count" value="0" scope="page" />
@@ -172,10 +180,12 @@
 										<tr>
 											<td>${count}</td>
 											<td>${token.token.address}</td>
-											<td>${token.token.name}</td>
-											<td>${token.token.symbol}</td>
+											<td>${token.token.name} (${token.token.symbol})</td>
+											<td>${token.token.tokenprice} ${token.token.symbol}</td>
 											<td>${token.balance}</td>
-											<td class="sendbuytoken${count}"><script>showSendBuyAction('<c:out value='${token.token.tokenid}'/>', 'sendbuytoken' + '<c:out value='${count}'/>', '<c:out value='${currentUser.bcaddress}'/>')</script>
+											<td class="ostarttime${count}"><script>formatAndDisplayDate('<c:out value='${token.token.starttime}'/>', 'ostarttime' + '<c:out value='${count}'/>');</script></td>
+											<td class="oendtime${count}"><script>formatAndDisplayDate('<c:out value='${token.token.endtime}'/>', 'oendtime' + '<c:out value='${count}'/>');</script></td>
+											<td class="sendbuytoken${count}"><script>showSendBuyAction('<c:out value='${token.token.tokenid}'/>', 'sendbuytoken' + '<c:out value='${count}'/>', '<c:out value='${token.showBuy}'/>')</script>
 										</tr>
 									</c:forEach>
 								</table>

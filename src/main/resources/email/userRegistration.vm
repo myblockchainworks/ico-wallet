@@ -1,0 +1,34 @@
+<html>
+<body>
+<div style="border:1px solid #d1d1d1;border-radius:5px;box-shadow:0 0 1px 1px #ccc;background:#fafafa">
+  <h1 style="padding:20px;margin:0;background:#2b3a41;color:#d8ac24">
+    ICO Token Wallet
+  </h1>
+  <div style="padding:0 10px;">
+    <br>
+    <h2>User Registration Verification</h2>
+    <p>
+        Dear ${user},<br><br>
+
+        Thank you for signing up with ICO Token Wallet. To provide you the best service possible, we require you to verify your email address.
+	
+		<br><br>
+		Username : ${username}<br>
+		Password : ${password}<br>
+		<br>
+
+        Please click on the button below to proceed with your registration.
+        <br>
+        <br><br>
+        <a href='${link}' target="_blank"
+           style="border:1px solid #428bca;background:#428bca;padding:7px;color:#fff;border-radius:5px;text-decoration:none">
+          Verify</a>
+        <br>
+        <br><br>
+        Best regards,<br>
+        ICO Token Wallet Team.
+    </p>
+    <br>
+  </div>
+</div>
+</body>

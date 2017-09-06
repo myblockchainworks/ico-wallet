@@ -56,6 +56,12 @@ public class User implements Serializable {
 	@Column(name = "privatekey")
 	private String privatekey;
 	
+	@Column(name = "verificationcode")
+	private String verificationcode;
+	
+	@Column(name = "enabled")
+	private boolean enabled;
+	
 	@Column(name = "keystore")
 	@Type(type="text")
 	private String keystore;
@@ -256,6 +262,34 @@ public class User implements Serializable {
 		this.tokenBalance = tokenBalance;
 	}
 
+	/**
+	 * @return the verificationcode
+	 */
+	public String getVerificationcode() {
+		return verificationcode;
+	}
+
+	/**
+	 * @param verificationcode the verificationcode to set
+	 */
+	public void setVerificationcode(String verificationcode) {
+		this.verificationcode = verificationcode;
+	}
+
+	/**
+	 * @return the enabled
+	 */
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	/**
+	 * @param enabled the enabled to set
+	 */
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
@@ -263,7 +297,8 @@ public class User implements Serializable {
 	public String toString() {
 		return "User [userid=" + userid + ", username=" + username + ", password=" + password + ", fullname=" + fullname
 				+ ", contactnumber=" + contactnumber + ", email=" + email + ", bcaddress=" + bcaddress + ", privatekey="
-				+ privatekey + ", keystore=" + keystore + ", lastLogin=" + lastLogin + ", currentLogin=" + currentLogin
-				+ ", balance=" + balance + ", tokenBalance=" + tokenBalance + "]";
+				+ privatekey + ", verificationcode=" + verificationcode + ", enabled=" + enabled + ", keystore="
+				+ keystore + ", lastLogin=" + lastLogin + ", currentLogin=" + currentLogin + ", balance=" + balance
+				+ ", tokenBalance=" + tokenBalance + "]";
 	}
 }

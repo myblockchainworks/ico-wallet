@@ -49,7 +49,7 @@
 		<ul class="nav navbar-left top-nav">
 			<div class="row">
 				<div class="col-sm-6">
-					<div class="search">
+					<!-- <div class="search">
 
 						<div class="input-group col-md-12">
 							<form class="navbar-form" role="search">
@@ -69,7 +69,7 @@
 
 
 
-					</div>
+					</div> -->
 				</div>
 				<div class="col-sm-6">
 					<ul class="top_hed pull-right">
@@ -137,21 +137,29 @@
 								</div>
 								<div class="form-group">
 
-									<div class="col-sm-4">
-										<label>Decimals</label> <input type="number" id="decimals" name="decimals"
-											placeholder="e.g., 8" class="form-control" min="1" max="18" required>
+									<div class="col-sm-4"  style="display: none">
+										<label>Decimals</label> <input type="number" id="decimals" name="decimals" value="0"
+											placeholder="e.g., 8" class="form-control" required>
 									</div>
-									<div class='col-sm-4'>
+									<div class='col-sm-3'>
 										<label>Initial Supply</label>
 										 <input type="number" id="initialSupply" name="initialSupply"
 											placeholder="e.g., 1000000" class="form-control" required>
 									</div>
-									<div class='col-sm-4'>
+									<div class='col-sm-3'>
 										<label>Token Price</label>
 										 <input type="number" id="tokenPrice" name="tokenPrice"
 											placeholder="e.g., 100 (1 ETH = 100 Token)" class="form-control" required>
 									</div>
-
+									<div class='col-sm-3'>
+										<label>Crowdsale Start Time</label>
+										<input type="datetime-local" id="launchDate" name="startTime" required></input>
+									</div>
+									
+									<div class='col-sm-3'>
+										<label>Crowdsale End Time</label>
+										 <input type="datetime-local" id="launchDate" name="endTime" required></input>
+									</div>
 								</div>
 								<button type="submit"
 										class="btn btn-lg btn-info">Create</button>

@@ -1,5 +1,7 @@
 
 function formatAndDisplayDate(value, className) {
+	if (value.endsWith(".0"))
+		value = value.substring(0, value.length - 2).replace(' ', 'T');
 	var date = new Date(value);
 	var monthNames = [
 	  "Jan", "Feb", "Mar",
@@ -7,7 +9,6 @@ function formatAndDisplayDate(value, className) {
 	  "Aug", "Sep", "Oct",
 	  "Nov", "Dec"
 	];
-	
 	var day = date.getDate();
 	var monthIndex = date.getMonth();
 	var year = date.getFullYear();
@@ -67,16 +68,23 @@ function formatAddress(address, className, currentAddress) {
 }
 
 function downloadKeyStore() {
-	var privatekey = $('#privatekey').html();
-	var downloadData = $('#keystoreJson').val();
-	downloadData = downloadData.replace(/\\/g, '\"');
-	var hiddenElement = document.createElement('a');
-	document.body.appendChild(hiddenElement);
-	hiddenElement.setAttribute("type", "hidden"); // make it hidden if needed
-	hiddenElement.href = 'data:text/json;charset=utf-8,' + encodeURI(downloadData);
-	hiddenElement.target = '_blank';
-	hiddenElement.download = 'keystore-' + privatekey + '.json';
-	hiddenElement.click();
+	var isSafari = /constructor/i.test(window.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]"; })(!window['safari'] || (typeof safari !== 'undefined' && safari.pushNotification));
+
+	if (isSafari) {
+		alert ("Download keyfile has been blocked due to the file protocol, please use other brower! (i.e. Chrome or Firefox)");
+	} else {
+		var privatekey = $('#privatekey').html();
+		var downloadData = $('#keystoreJson').val();
+		downloadData = downloadData.replace(/\\/g, '\"');
+		
+		var hiddenElement = document.createElement('a');
+		document.body.appendChild(hiddenElement);
+		hiddenElement.setAttribute("type", "hidden"); // make it hidden if needed
+		hiddenElement.href = 'data:text/json;charset=utf-8,' + encodeURI(downloadData);
+		hiddenElement.target = '_blank';
+		hiddenElement.download = 'keystore-' + privatekey + '.json';
+		hiddenElement.click();
+	}
 }
 
 function buyTokenConfirmation() {
@@ -106,6 +114,16 @@ function sendTokenConfirmation() {
 	}
 }
 
+function addAdditionTokenConfirmation() {
+	var token = $('#tokensupply').val();
+	if (token != undefined && token != '') {
+		if(confirm ("Are you sure you want to increase the token supply by " + token + "?")) {
+			$('#addAdditionalTokenForm').submit();
+		}
+	} else {
+		alert ("Please enter the additional token supply you wanted to increase!");
+	}
+}
 
 function sendEtherConfirmation() {
 	var toaddress = $('#toaddress').val();
@@ -119,10 +137,16 @@ function sendEtherConfirmation() {
 	}
 }
 
-function showSendAction(token, className) {
-	$('.' + className).html('<a href="sendtoken?refnumber=' + token + '" class="buttontype">Send</a>');
+function showSendAction(token, className, balance) {
+	if (balance > 500000)
+		$('.' + className).html('<a href="sendtoken?refnumber=' + token + '" class="buttontype">Send</a>');
+	else 
+		$('.' + className).html('<a href="sendtoken?refnumber=' + token + '" class="buttontype">Send</a> <a style="background-color: #3c763d;" href="increasetoken?refnumber=' + token + '" class="buttontype"> + Supply</a>');
 }
 
-function showSendBuyAction(token, className) {
-	$('.' + className).html('<a href="sendtoken?refnumber=' + token + '" class="buttontype">Send</a> <a style="background-color: #2dbcc4;" href="buytoken?refnumber=' + token + '" class="buttontype">Buy</a> <a style="background-color:#be0505" href="removetoken?refnumber=' + token + '" class="buttontype">Remove</a>');
+function showSendBuyAction(token, className, showBuy) {
+	if (showBuy == "true")
+		$('.' + className).html('<a href="sendtoken?refnumber=' + token + '" class="buttontype">Send</a> <a style="background-color: #2dbcc4;" href="buytoken?refnumber=' + token + '" class="buttontype">Buy</a> <a style="background-color:#be0505" href="removetoken?refnumber=' + token + '" class="buttontype">Remove</a>');
+	else 
+		$('.' + className).html('<a href="sendtoken?refnumber=' + token + '" class="buttontype">Send</a> <a style="background-color:#be0505" href="removetoken?refnumber=' + token + '" class="buttontype">Remove</a>');
 }

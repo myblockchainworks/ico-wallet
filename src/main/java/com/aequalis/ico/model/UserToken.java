@@ -39,6 +39,12 @@ public class UserToken implements Serializable {
 	
 	@Transient
 	private String balance;
+	
+	@Transient
+	private String fundRaised;
+	
+	@Transient
+	private boolean showBuy;
 
 	/**
 	 * @return the usertokenid
@@ -96,13 +102,41 @@ public class UserToken implements Serializable {
 		this.token = token;
 	}
 
+	/**
+	 * @return the fundRaised
+	 */
+	public String getFundRaised() {
+		return fundRaised;
+	}
+
+	/**
+	 * @param fundRaised the fundRaised to set
+	 */
+	public void setFundRaised(String fundRaised) {
+		this.fundRaised = fundRaised;
+	}
+
+	/**
+	 * @return the showBuy
+	 */
+	public boolean isShowBuy() {
+		return showBuy;
+	}
+
+	/**
+	 * @param showBuy the showBuy to set
+	 */
+	public void setShowBuy(boolean showBuy) {
+		this.showBuy = showBuy;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
 		return "UserToken [usertokenid=" + usertokenid + ", user=" + user + ", token=" + token + ", balance=" + balance
-				+ "]";
+				+ ", fundRaised=" + fundRaised + ", showBuy=" + showBuy + "]";
 	}
 	
 }

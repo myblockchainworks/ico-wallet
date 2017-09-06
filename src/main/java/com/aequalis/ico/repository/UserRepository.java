@@ -7,8 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.aequalis.ico.model.User;
 
-import java.lang.String;
-
 /**
  * @author anand
  *
@@ -23,4 +21,5 @@ public interface UserRepository extends JpaRepository<User, Long>  {
 	
 	User findByBcaddress(String bcaddress);
 	
+	User findByVerificationcode(String verificationcode);
 }

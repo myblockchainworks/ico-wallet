@@ -24,4 +24,5 @@ public interface UserService {
 	
 	public User findByBcaddress(String bcaddress);
 	
+	public User findByVerificationcode(String verificationcode);
 }

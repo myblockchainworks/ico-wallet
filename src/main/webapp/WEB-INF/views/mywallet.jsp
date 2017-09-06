@@ -49,7 +49,7 @@
 		<ul class="nav navbar-left top-nav">
 			<div class="row">
 				<div class="col-sm-6">
-					<div class="search">
+					<!-- <div class="search">
 
 						<div class="input-group col-md-12">
 							<form class="navbar-form" role="search">
@@ -66,10 +66,7 @@
 							</form>
 
 						</div>
-
-
-
-					</div>
+					</div> -->
 				</div>
 				<div class="col-sm-6">
 					<ul class="top_hed pull-right">

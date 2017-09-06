@@ -59,4 +59,9 @@ public class UserServiceImpl implements UserService {
 	public User findByBcaddress(String bcaddress) {
 		return userRepository.findByBcaddress(bcaddress);
 	}
+
+	@Override
+	public User findByVerificationcode(String verificationcode) {
+		return userRepository.findByVerificationcode(verificationcode);
+	}
 }
