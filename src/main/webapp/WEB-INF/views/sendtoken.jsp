@@ -154,7 +154,7 @@
 											<span>Amount</span>
 										</div>
 										<div class='col-sm-6'>
-											<input type="number" id="tokenamount" name="tokenamount"
+											<input type="number" id="tokenamount" name="tokenamount" step="any"
 													placeholder="e.g., 100" class="form-control" required>
 										</div>
 		

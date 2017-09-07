@@ -53,7 +53,14 @@ public interface WEBAPI {
 	
 	static String FUNDRAISED_DATA = "{  \"_tokenAddress\": \"PARAM1\" }";
 	
+	static String ISTOKENACTIVE = "isTokenActive";
+	
 	static String INCREASETOKENSUPPLY = "increaseTokenSupply";
 	
 	static String INCREASETOKENSUPPLY_DATA = "{  \"_tokenAddress\": \"PARAM1\", \"_additionalSupply\" : PARAM2 }";
+	
+	static String FREEZEORUNFREEZETOKEN = "freezeOrUnfreezeToken";
+	
+	static String FREEZEORUNFREEZETOKEN_DATA = "{  \"_tokenAddress\": \"PARAM1\", \"_active\" : PARAM2 }";
+	
 }

@@ -111,8 +111,8 @@
 		</nav>
 		
 		<div class="container" style="padding-top: 50px;">
-			<div class="errorMessageDiv"><script>showErrorMessage('<c:out value='${param.errormsg}'/>')</script></div>
-			<div class="successMessageDiv"><script>showSuccessMessage('<c:out value='${param.successmsg}'/>')</script></div>
+			<div class="errorMessageDiv"><script>showErrorMessageWallet('<c:out value='${param.errormsg}'/>')</script></div>
+			<div class="successMessageDiv"><script>showSuccessMessageWallet('<c:out value='${param.successmsg}'/>')</script></div>
 			<div class="row">
 		   		<div class="col-lg-12">
 		   			<div class="breadcrumb">
@@ -127,12 +127,12 @@
 										<!-- <th>Created Date</th>  -->
 										<th>Address</th> 
 										<th>Name</th> 
-										<th>Price (1 ETH)</th>
+										<th>Price (1ETH)</th>
 										<th>Balance</th>
 										<th>Start Time</th>
 										<th>End Time</th>
 										<th>Fund Raised</th>
-										<th>Action</th>
+										<th style="min-width: 175px;">Action</th>
 									</tr>
 									<c:set var="count" value="0" scope="page" />
 									<c:forEach items="${myTokens}" var="token">
@@ -147,7 +147,7 @@
 											<td class="starttime${count}"><script>formatAndDisplayDate('<c:out value='${token.token.starttime}'/>', 'starttime' + '<c:out value='${count}'/>');</script></td>
 											<td class="endtime${count}"><script>formatAndDisplayDate('<c:out value='${token.token.endtime}'/>', 'endtime' + '<c:out value='${count}'/>');</script></td>
 											<td>${token.fundRaised} ETH </td>
-											<td class="sendtoken${count}"><script>showSendAction('<c:out value='${token.token.tokenid}'/>', 'sendtoken' + '<c:out value='${count}'/>', '<c:out value='${token.balance}'/>')</script>
+											<td class="sendtoken${count}"><script>showSendAction('<c:out value='${token.token.tokenid}'/>', 'sendtoken' + '<c:out value='${count}'/>', '<c:out value='${token.balance}'/>', '<c:out value='${token.active}'/>')</script></td>
 										</tr>
 									</c:forEach>
 								</table>
@@ -168,7 +168,7 @@
 										<th>#</th>
 										<th>Address</th> 
 										<th>Name</th> 
-										<th>Price (1 ETH)</th>
+										<th>Price (1ETH)</th>
 										<th>Balance</th>
 										<th>Start Time</th>
 										<th>End Time</th>
@@ -185,7 +185,7 @@
 											<td>${token.balance}</td>
 											<td class="ostarttime${count}"><script>formatAndDisplayDate('<c:out value='${token.token.starttime}'/>', 'ostarttime' + '<c:out value='${count}'/>');</script></td>
 											<td class="oendtime${count}"><script>formatAndDisplayDate('<c:out value='${token.token.endtime}'/>', 'oendtime' + '<c:out value='${count}'/>');</script></td>
-											<td class="sendbuytoken${count}"><script>showSendBuyAction('<c:out value='${token.token.tokenid}'/>', 'sendbuytoken' + '<c:out value='${count}'/>', '<c:out value='${token.showBuy}'/>')</script>
+											<td class="sendbuytoken${count}"><script>showSendBuyAction('<c:out value='${token.token.tokenid}'/>', 'sendbuytoken' + '<c:out value='${count}'/>', '<c:out value='${token.showBuy}'/>', '<c:out value='${token.active}'/>')</script>
 										</tr>
 									</c:forEach>
 								</table>

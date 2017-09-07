@@ -209,6 +209,41 @@ public class WebAPICall {
 	}
 	
 	
+	public static boolean isTokenActive(String tokenAddress) {
+		boolean result = false;
+		try {
+			URL url = new URL(BLOCKCHAIN_BASE + WEBAPI.ISTOKENACTIVE);
+			HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
+			httpCon.setDoOutput(true);
+			httpCon.setRequestMethod("POST");
+			httpCon.setRequestProperty("Content-Type","application/json");
+			OutputStreamWriter out = new OutputStreamWriter(httpCon.getOutputStream());
+			String data = WEBAPI.FUNDRAISED_DATA.replace("PARAM1", tokenAddress);
+			out.write(data);
+			out.close();
+		  
+			BufferedReader br;
+			if (200 <= httpCon.getResponseCode() && httpCon.getResponseCode() <= 299) {
+				br = new BufferedReader(new InputStreamReader((httpCon.getInputStream())));
+				StringBuilder sb = new StringBuilder();
+				String output;
+				while ((output = br.readLine()) != null) {
+					sb.append(output);
+				}
+				
+				JSONObject json = new JSONObject(sb.toString());
+				if(json.has("result"))
+					result = json.getBoolean("result");
+			}
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	
 	public static UserDTO createAccount(String passcode) {
 		UserDTO user = null;
 		try {
@@ -292,6 +327,41 @@ public class WebAPICall {
 			httpCon.setRequestProperty("Content-Type","application/json");
 			OutputStreamWriter out = new OutputStreamWriter(httpCon.getOutputStream());
 			String data = WEBAPI.INCREASETOKENSUPPLY_DATA.replace("PARAM1", tokenAddress).replace("PARAM2", additionalSupply);
+			out.write(data);
+			out.close();
+		  
+			BufferedReader br;
+			if (200 <= httpCon.getResponseCode() && httpCon.getResponseCode() <= 299) {
+				br = new BufferedReader(new InputStreamReader((httpCon.getInputStream())));
+				StringBuilder sb = new StringBuilder();
+				String output;
+				while ((output = br.readLine()) != null) {
+					sb.append(output);
+				}
+				
+				JSONObject json = new JSONObject(sb.toString());
+				if(json.has("transaction")) {
+					transaction = json.getString("transaction");
+				}
+			}
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return transaction;
+	}
+	
+	public static String freezeOrUnfreezeToken(String tokenAddress, String active) {
+		String transaction = null;
+		try {
+			URL url = new URL(BLOCKCHAIN_BASE + WEBAPI.FREEZEORUNFREEZETOKEN);
+			HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
+			httpCon.setDoOutput(true);
+			httpCon.setRequestMethod("POST");
+			httpCon.setRequestProperty("Content-Type","application/json");
+			OutputStreamWriter out = new OutputStreamWriter(httpCon.getOutputStream());
+			String data = WEBAPI.FREEZEORUNFREEZETOKEN_DATA.replace("PARAM1", tokenAddress).replace("PARAM2", active);
 			out.write(data);
 			out.close();
 		  

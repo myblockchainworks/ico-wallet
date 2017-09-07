@@ -45,6 +45,9 @@ public class UserToken implements Serializable {
 	
 	@Transient
 	private boolean showBuy;
+	
+	@Transient
+	private boolean active;
 
 	/**
 	 * @return the usertokenid
@@ -130,13 +133,27 @@ public class UserToken implements Serializable {
 		this.showBuy = showBuy;
 	}
 
+	/**
+	 * @return the active
+	 */
+	public boolean isActive() {
+		return active;
+	}
+
+	/**
+	 * @param active the active to set
+	 */
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
 		return "UserToken [usertokenid=" + usertokenid + ", user=" + user + ", token=" + token + ", balance=" + balance
-				+ ", fundRaised=" + fundRaised + ", showBuy=" + showBuy + "]";
+				+ ", fundRaised=" + fundRaised + ", showBuy=" + showBuy + ", active=" + active + "]";
 	}
 	
 }

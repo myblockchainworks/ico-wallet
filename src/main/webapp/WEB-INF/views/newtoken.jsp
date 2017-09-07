@@ -138,7 +138,7 @@
 								<div class="form-group">
 
 									<div class="col-sm-4"  style="display: none">
-										<label>Decimals</label> <input type="number" id="decimals" name="decimals" value="0"
+										<label>Decimals</label> <input type="number" id="decimals" name="decimals" value="18"
 											placeholder="e.g., 8" class="form-control" required>
 									</div>
 									<div class='col-sm-3'>
@@ -153,12 +153,12 @@
 									</div>
 									<div class='col-sm-3'>
 										<label>Crowdsale Start Time</label>
-										<input type="datetime-local" id="launchDate" name="startTime" required></input>
+										<input type="datetime-local" id="launchDate" name="startTime" class="form-control" required></input>
 									</div>
 									
 									<div class='col-sm-3'>
 										<label>Crowdsale End Time</label>
-										 <input type="datetime-local" id="launchDate" name="endTime" required></input>
+										 <input type="datetime-local" id="launchDate" name="endTime" class="form-control" required></input>
 									</div>
 								</div>
 								<button type="submit"

@@ -40,6 +40,25 @@ function diffDays(d1, d2)
   return ndays;
 }
 
+function showErrorMessageWallet(message) {
+	if (message != "") {
+		$(".errorMessageDiv").html('<div id="login-alert" class="alert alert-danger col-sm-12">' + message + '</div>');
+		setTimeout(function() { 
+			$(".errorMessageDiv").fadeOut(1000);
+			window.location.href = "tokens";
+		}, 3000);
+	}
+}
+
+function showSuccessMessageWallet(message) {
+	if (message != "") {
+		$(".successMessageDiv").html('<div id="login-alert" class="alert alert-success col-sm-12">' + message + '</div>');
+		setTimeout(function() { 
+			$(".successMessageDiv").fadeOut(1000);
+			window.location.href = "tokens";
+		}, 3000);
+	}
+}
 
 function showErrorMessage(message) {
 	if (message != "") {
@@ -102,12 +121,8 @@ function sendTokenConfirmation() {
 	var toaddress = $('#toaddress').val();
 	var tokenamount = $('#tokenamount').val();
 	if (toaddress != undefined && toaddress != '' && tokenamount != undefined && tokenamount != '') {
-		if (tokenamount % 1 != 0) {
-			alert ("Please enter a valid TWG amount!");
-		} else {
-			if(confirm ("Are you sure you want to send " + tokenamount + " tokens to " + toaddress + "?")) {
-				$('#sendTokenForm').submit();
-			}
+		if(confirm ("Are you sure you want to send " + tokenamount + " tokens to " + toaddress + "?")) {
+			$('#sendTokenForm').submit();
 		}
 	} else {
 		alert ("Please fill the recipient address and token amount!");
@@ -137,16 +152,45 @@ function sendEtherConfirmation() {
 	}
 }
 
-function showSendAction(token, className, balance) {
-	if (balance > 500000)
-		$('.' + className).html('<a href="sendtoken?refnumber=' + token + '" class="buttontype">Send</a>');
-	else 
-		$('.' + className).html('<a href="sendtoken?refnumber=' + token + '" class="buttontype">Send</a> <a style="background-color: #3c763d;" href="increasetoken?refnumber=' + token + '" class="buttontype"> + Supply</a>');
+function showSendAction(token, className, balance, active) {
+	var freezeActive = '<a style="background-color:#be0505" onclick="confrimationFreeze(' + token + ', false)" class="buttontype">Freeze</a>';
+	if (active == "false") {
+		freezeActive = '<a style="background-color:#2dbcc4" onclick="confrimationFreeze(' + token + ', true)" class="buttontype">Unfreeze</a>';
+		$('.' + className).html(freezeActive);
+	} else {
+		if (balance > 500000)
+			$('.' + className).html('<a href="sendtoken?refnumber=' + token + '" class="buttontype">Send</a> ' + freezeActive);
+		else 
+			$('.' + className).html('<a href="sendtoken?refnumber=' + token + '" class="buttontype">Send</a> <a style="background-color: #3c763d;" href="increasetoken?refnumber=' + token + '" class="buttontype"> + Supply</a> ' + freezeActive);
+	}
 }
 
-function showSendBuyAction(token, className, showBuy) {
-	if (showBuy == "true")
-		$('.' + className).html('<a href="sendtoken?refnumber=' + token + '" class="buttontype">Send</a> <a style="background-color: #2dbcc4;" href="buytoken?refnumber=' + token + '" class="buttontype">Buy</a> <a style="background-color:#be0505" href="removetoken?refnumber=' + token + '" class="buttontype">Remove</a>');
-	else 
-		$('.' + className).html('<a href="sendtoken?refnumber=' + token + '" class="buttontype">Send</a> <a style="background-color:#be0505" href="removetoken?refnumber=' + token + '" class="buttontype">Remove</a>');
+function showSendBuyAction(token, className, showBuy, active) {
+	if (active == "true") {
+		if (showBuy == "true")
+			$('.' + className).html('<a href="sendtoken?refnumber=' + token + '" class="buttontype">Send</a> <a style="background-color: #2dbcc4;" href="buytoken?refnumber=' + token + '" class="buttontype">Buy</a> <a style="background-color:#be0505" href="removetoken?refnumber=' + token + '" class="buttontype">Remove</a>');
+		else 
+			$('.' + className).html('<a href="sendtoken?refnumber=' + token + '" class="buttontype">Send</a> <a style="background-color:#be0505" href="removetoken?refnumber=' + token + '" class="buttontype">Remove</a>');
+	} else {
+		$('.' + className).html('<a style="background-color:#be0505" href="removetoken?refnumber=' + token + '" class="buttontype">Remove</a>');
+	}
+	
+}
+
+function showFreezeIcon(active, className) {
+	if (active == "false") {
+		$('.' + className).html('<img src="resources/images/freeze-icon.png" style="height: 36px;width: 36px;">');
+	}
+}
+
+function confrimationFreeze(referNumber, activeStatus) {
+	if (activeStatus) {
+		if(confirm ("Are you sure you want to unfreeze the token?")) {
+			window.location.href = 'freezetoken?refnumber=' + referNumber + '&activeStatus=true'
+		}
+	} else {
+		if(confirm ("Are you sure you want to freeze the token?")) {
+			window.location.href = 'freezetoken?refnumber=' + referNumber + '&activeStatus=false'
+		}
+	}
 }

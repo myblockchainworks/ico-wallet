@@ -143,7 +143,7 @@
 
 									</div>
 									
-									<div class="col-sm-6" style="display: none;">
+									<div class="col-sm-6">
 										<label>Decimals</label> <input type="number" id="decimals" name="decimals"
 											placeholder="e.g., 8" class="form-control" min="1" max="18" readonly="readonly" value="${token.decimals }">
 									</div>

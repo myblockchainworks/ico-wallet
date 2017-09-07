@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -281,7 +282,8 @@ public class HomeController {
 			
 			List<UserToken> userTokens = userTokenService.findByUser(user);
 			for (UserToken userToken : userTokens) {
-				userToken.setBalance(WebAPICall.myTokenBalance(user.getBcaddress(), userToken.getToken().getAddress()));
+				userToken.setBalance(convertToDecimal(WebAPICall.myTokenBalance(user.getBcaddress(), userToken.getToken().getAddress())));
+				userToken.setActive(WebAPICall.isTokenActive(userToken.getToken().getAddress()));
 			}
 			
 			model.addAttribute("userTokens", userTokens);
@@ -311,9 +313,10 @@ public class HomeController {
 			List<UserToken> userTokens = userTokenService.findByUser(user);
 			Date now = new Date();
 			for (UserToken userToken : userTokens) {
-				userToken.setBalance(WebAPICall.myTokenBalance(user.getBcaddress(), userToken.getToken().getAddress()));
-				userToken.setFundRaised(getFunRaised(userToken.getToken().getAddress()).toString()); // .setScale(2, BigDecimal.ROUND_UP)
+				userToken.setBalance(convertToDecimal(WebAPICall.myTokenBalance(user.getBcaddress(), userToken.getToken().getAddress())));
+				userToken.setActive(WebAPICall.isTokenActive(userToken.getToken().getAddress()));
 				if (userToken.getToken().getUser().getUserid() == user.getUserid()) {
+					userToken.setFundRaised(getFunRaised(userToken.getToken().getAddress()).toString()); // .setScale(2, BigDecimal.ROUND_UP)
 					myTokens.add(userToken);
 				} else {
 					if (userToken.getToken().getStarttime().before(now) && userToken.getToken().getEndtime().after(now)) 
@@ -360,6 +363,35 @@ public class HomeController {
 			model.addAttribute("currentUser", user);
 			
 			return "addtoken";
+		}
+		
+		return "index";
+	}
+	
+	
+	@RequestMapping(value = "/freezetoken", method = RequestMethod.GET)
+	public String freezetokenScreen(Model model, HttpServletRequest httpServletRequest) {
+	    
+		HttpSession session = getSession();
+		Object userId = session.getAttribute("loginUser");
+		
+		String refnumber = httpServletRequest.getParameter("refnumber");
+		String active = httpServletRequest.getParameter("activeStatus");
+		
+		if(userId != null) {
+			Token token = tokenService.findByTokenid(Long.parseLong(refnumber));
+			if (token != null) {
+				String result = WebAPICall.freezeOrUnfreezeToken(token.getAddress(), active);
+				if (result != null)
+					if (active.equals("false"))
+						return "redirect:tokens?successmsg=Successfully Freezed Token!";
+					else
+						return "redirect:tokens?successmsg=Successfully Unfreezed Token!";
+				else
+					return "redirect:tokens?errormsg=Could not process your request, please try again!";
+			} else {
+				return "index";
+			}
 		}
 		
 		return "index";
@@ -476,15 +508,21 @@ public class HomeController {
 		if(userId != null) {
 			Token token = tokenService.findByTokenid(Long.parseLong(refnumber));
 			if (token != null) {
-				User user = userService.findByUserid(Long.parseLong(userId.toString()));
-				user.setTokenBalance(WebAPICall.myTokenBalance(user.getBcaddress(), ""));
-				String balance = WebAPICall.myTokenBalance(user.getBcaddress(), token.getAddress());
-				model.addAttribute("tokenName", token.getName());
-				model.addAttribute("tokenId", token.getTokenid());
-				model.addAttribute("tokenAddress", token.getAddress());
-				model.addAttribute("balance", balance);
-				model.addAttribute("currentUser", user);
-				return "sendtoken";
+				boolean active = WebAPICall.isTokenActive(token.getAddress());
+				if (active) {
+					User user = userService.findByUserid(Long.parseLong(userId.toString()));
+					user.setTokenBalance(WebAPICall.myTokenBalance(user.getBcaddress(), ""));
+					String balance = WebAPICall.myTokenBalance(user.getBcaddress(), token.getAddress());
+					model.addAttribute("tokenName", token.getName());
+					model.addAttribute("tokenId", token.getTokenid());
+					model.addAttribute("tokenAddress", token.getAddress());
+					model.addAttribute("balance", convertToDecimal(balance));
+					model.addAttribute("currentUser", user);
+					return "sendtoken";
+				} else {
+					return "redirect:tokens?errormsg=Token is freezed, please try again!";
+				}
+				
 			} else {
 				return "index";
 			}
@@ -503,15 +541,20 @@ public class HomeController {
 		if(userId != null) {
 			Token token = tokenService.findByTokenid(Long.parseLong(refnumber));
 			if (token != null) {
-				User user = userService.findByUserid(Long.parseLong(userId.toString()));
-				user.setTokenBalance(WebAPICall.myTokenBalance(user.getBcaddress(), ""));
-				String balance = WebAPICall.myTokenBalance(user.getBcaddress(), token.getAddress());
-				model.addAttribute("tokenName", token.getName());
-				model.addAttribute("tokenId", token.getTokenid());
-				model.addAttribute("tokenAddress", token.getAddress());
-				model.addAttribute("balance", balance);
-				model.addAttribute("currentUser", user);
-				return "increasetoken";
+				boolean active = WebAPICall.isTokenActive(token.getAddress());
+				if (active) {
+					User user = userService.findByUserid(Long.parseLong(userId.toString()));
+					user.setTokenBalance(WebAPICall.myTokenBalance(user.getBcaddress(), ""));
+					String balance = WebAPICall.myTokenBalance(user.getBcaddress(), token.getAddress());
+					model.addAttribute("tokenName", token.getName());
+					model.addAttribute("tokenId", token.getTokenid());
+					model.addAttribute("tokenAddress", token.getAddress());
+					model.addAttribute("balance", convertToDecimal(balance));
+					model.addAttribute("currentUser", user);
+					return "increasetoken";
+				} else {
+					return "redirect:tokens?errormsg=Token is freezed, please try again!";
+				}
 			} else {
 				return "index";
 			}
@@ -548,14 +591,18 @@ public class HomeController {
 		if(userId != null) {
 			Token token = tokenService.findByTokenid(Long.parseLong(refnumber));
 			if (token != null) {
-				User user = userService.findByUserid(Long.parseLong(userId.toString()));
-				user.setTokenBalance(WebAPICall.myTokenBalance(user.getBcaddress(), ""));
-				model.addAttribute("tokenName", token.getName());
-				model.addAttribute("tokenId", token.getTokenid());
-				model.addAttribute("tokenAddress", token.getAddress());
-				model.addAttribute("currentUser", user);
-				return "buytoken";
-				
+				boolean active = WebAPICall.isTokenActive(token.getAddress());
+				if (active) {
+					User user = userService.findByUserid(Long.parseLong(userId.toString()));
+					user.setTokenBalance(WebAPICall.myTokenBalance(user.getBcaddress(), ""));
+					model.addAttribute("tokenName", token.getName());
+					model.addAttribute("tokenId", token.getTokenid());
+					model.addAttribute("tokenAddress", token.getAddress());
+					model.addAttribute("currentUser", user);
+					return "buytoken";
+				} else {
+					return "redirect:tokens?errormsg=Token is freezed, please try again!";
+				}
 			} else {
 				return "index";
 			}
@@ -660,47 +707,54 @@ public class HomeController {
 			User user = userService.findByUserid(Long.parseLong(userId.toString()));
 			Token token = tokenService.findByAddress(tokenaddress);
 			if (token != null) {
-				if (etheramount != null) {
-					BigDecimal etherAmount = new BigDecimal(etheramount);
-					BigDecimal myBalance = getMyBalance(user.getBcaddress());
-					
-					if (myBalance != null && myBalance.compareTo(etherAmount) > 0) {
-						String privateKey = user.getPrivatekey();
-						if (privateKey != null && !privateKey.isEmpty()) {
-							privateKey = privateKey.substring(2, privateKey.length());
-						}
-						String result = WebAPICall.buyToken(user.getBcaddress(), privateKey, etheramount, tokenaddress);
-						if (result != null) {
-							if (!result.contains("Error:")) {
-								TransactionLog transactionLog = new TransactionLog();
-								transactionLog.setTransactiondate(new Date());
-								transactionLog.setFromaddress(user.getBcaddress());
-								transactionLog.setToaddress(tokenaddress);
-								transactionLog.setAmount(etheramount);
-								transactionLog.setStatus(true);
-								transactionLog.setToken(tokenService.findByAddress("ethertoken"));
-								transactionLog.setReferencenumber(result);
-								transactionLog.setType("Bought Token");
-								transactionLogService.addTransactionLog(transactionLog);
-								model.addAttribute("successmsg", "Successfully Bought Token!");
-								return new ModelAndView("redirect:/buytoken?refnumber=" + tokenid);
+				boolean active = WebAPICall.isTokenActive(token.getAddress());
+				if (active) {
+					if (etheramount != null) {
+						BigDecimal etherAmount = new BigDecimal(etheramount);
+						BigDecimal myBalance = getMyBalance(user.getBcaddress());
+						
+						if (myBalance != null && myBalance.compareTo(etherAmount) > 0) {
+							String privateKey = user.getPrivatekey();
+							if (privateKey != null && !privateKey.isEmpty()) {
+								privateKey = privateKey.substring(2, privateKey.length());
+							}
+							String result = WebAPICall.buyToken(user.getBcaddress(), privateKey, etheramount, tokenaddress);
+							if (result != null) {
+								if (!result.contains("Error:")) {
+									TransactionLog transactionLog = new TransactionLog();
+									transactionLog.setTransactiondate(new Date());
+									transactionLog.setFromaddress(user.getBcaddress());
+									transactionLog.setToaddress(tokenaddress);
+									transactionLog.setAmount(etheramount);
+									transactionLog.setStatus(true);
+									transactionLog.setToken(tokenService.findByAddress("ethertoken"));
+									transactionLog.setReferencenumber(result);
+									transactionLog.setType("Bought Token");
+									transactionLogService.addTransactionLog(transactionLog);
+									model.addAttribute("successmsg", "Successfully Bought Token!");
+									return new ModelAndView("redirect:/buytoken?refnumber=" + tokenid);
+								} else {
+									model.addAttribute("errormsg", result);
+									return new ModelAndView("redirect:/buytoken?refnumber=" + tokenid);
+								}
+								
 							} else {
-								model.addAttribute("errormsg", result);
+								model.addAttribute("errormsg", "Could not buy token. Please try again.");
 								return new ModelAndView("redirect:/buytoken?refnumber=" + tokenid);
 							}
-							
 						} else {
-							model.addAttribute("errormsg", "Could not buy token. Please try again.");
+							model.addAttribute("errormsg", "Insufficient ether!");
 							return new ModelAndView("redirect:/buytoken?refnumber=" + tokenid);
 						}
 					} else {
-						model.addAttribute("errormsg", "Insufficient ether!");
+						model.addAttribute("errormsg", "Invalid ether amount. Please try again.");
 						return new ModelAndView("redirect:/buytoken?refnumber=" + tokenid);
 					}
 				} else {
-					model.addAttribute("errormsg", "Invalid ether amount. Please try again.");
-					return new ModelAndView("redirect:/buytoken?refnumber=" + tokenid);
+					model.addAttribute("errormsg", "Token is freezed, please try again!.");
+					return new ModelAndView("redirect:/tokens");
 				}
+				
 			} else {
 				model.addAttribute("errormsg", "Invalid token. Please try again.");
 				return new ModelAndView("redirect:/buytoken?refnumber=" + tokenid);
@@ -722,20 +776,27 @@ public class HomeController {
 		if(userId != null) {
 			Token token = tokenService.findByAddress(tokenaddress);
 			if (token != null) {
-				if (tokensupply != null) {
-					
-					String transaction = WebAPICall.increaseTokenSupply(tokenaddress, tokensupply);
-					if (transaction != null) {
-						model.addAttribute("successmsg", "Successfully Updated Token Supply!");
-						return new ModelAndView("redirect:/increasetoken?refnumber=" + tokenid);
+				boolean active = WebAPICall.isTokenActive(token.getAddress());
+				if (active) {
+					if (tokensupply != null) {
+						
+						String transaction = WebAPICall.increaseTokenSupply(tokenaddress, convertToFullDecimal(tokensupply));
+						if (transaction != null) {
+							model.addAttribute("successmsg", "Successfully Updated Token Supply!");
+							return new ModelAndView("redirect:/increasetoken?refnumber=" + tokenid);
+						} else {
+							model.addAttribute("errormsg", "Could not increase the token supply. Please try again.");
+							return new ModelAndView("redirect:/increasetoken?refnumber=" + tokenid);
+						}		
 					} else {
-						model.addAttribute("errormsg", "Could not increase the token supply. Please try again.");
+						model.addAttribute("errormsg", "Invalid token supply. Please try again.");
 						return new ModelAndView("redirect:/increasetoken?refnumber=" + tokenid);
-					}		
+					}
 				} else {
-					model.addAttribute("errormsg", "Invalid token supply. Please try again.");
-					return new ModelAndView("redirect:/increasetoken?refnumber=" + tokenid);
+					model.addAttribute("errormsg", "Token is freezed, please try again!.");
+					return new ModelAndView("redirect:/tokens");
 				}
+				
 			} else {
 				model.addAttribute("errormsg", "Invalid token. Please try again.");
 				return new ModelAndView("redirect:/increasetoken?refnumber=" + tokenid);
@@ -744,6 +805,20 @@ public class HomeController {
 		}
 		
 		return new ModelAndView("redirect:/index");
+	}
+	
+	private String convertToFullDecimal(String value) {
+		BigDecimal wei = new BigDecimal("1000000000000000000");
+		BigDecimal fullValue = new BigDecimal(value);
+		fullValue = fullValue.multiply(wei);
+		return fullValue.toPlainString();
+	}
+	
+	private String convertToDecimal(String value) {
+		BigDecimal wei = new BigDecimal("1000000000000000000");
+		BigDecimal fullValue = new BigDecimal(value);
+		fullValue = fullValue.divide(wei);
+		return fullValue.toPlainString();
 	}
 	
 	@RequestMapping(value = "/createNewToken", method = RequestMethod.POST)
@@ -793,7 +868,8 @@ public class HomeController {
 			
 			Token token = tokenService.findByNameAndSymbol(tokenName, tokenSymbol);
 			if (token == null) {
-				String tokenAddress = WebAPICall.createToken(tokenName, tokenSymbol, decimals, initialSupply, tokenPrice, user.getBcaddress(), "" + startTime, "" + endTime);
+				
+				String tokenAddress = WebAPICall.createToken(tokenName, tokenSymbol, decimals, convertToFullDecimal(initialSupply), tokenPrice, user.getBcaddress(), "" + startTime, "" + endTime);
 				if (tokenAddress != null && tokenAddress.startsWith("0x")) {
 					token = new Token();
 					token.setName(tokenName);
@@ -892,40 +968,47 @@ public class HomeController {
 						
 						Token token = tokenService.findByAddress(tokenaddress);
 						if (token != null) {
-							String myBalance = WebAPICall.myTokenBalance(user.getBcaddress(), tokenaddress);
 							
-							if (myBalance != null && Long.parseLong(myBalance) >= Long.parseLong(tokenamount)) {
-								String privateKey = user.getPrivatekey();
-								if (privateKey != null && !privateKey.isEmpty()) {
-									privateKey = privateKey.substring(2, privateKey.length());
-								}
-								String result = WebAPICall.transferToken(user.getBcaddress(), privateKey, toaddress, tokenamount, tokenaddress);
-								if (result != null) {
-									if (!result.contains("Error:")) {
-										TransactionLog transactionLog = new TransactionLog();
-										transactionLog.setTransactiondate(new Date());
-										transactionLog.setFromaddress(user.getBcaddress());
-										transactionLog.setToaddress(toaddress);
-										transactionLog.setAmount(tokenamount);
-										transactionLog.setStatus(true);
-										transactionLog.setToken(token);
-										transactionLog.setReferencenumber(result);
-										transactionLog.setType("Token Transaction");
-										transactionLogService.addTransactionLog(transactionLog);
-										model.addAttribute("successmsg", "Successfully Transferred Token!");
-										return new ModelAndView("redirect:/sendtoken?refnumber=" + tokenid);
+							boolean active = WebAPICall.isTokenActive(token.getAddress());
+							if (active) {
+								BigDecimal myBalance = new BigDecimal(convertToDecimal(WebAPICall.myTokenBalance(user.getBcaddress(), tokenaddress)));
+								BigDecimal sendTokenAmount = new BigDecimal(tokenamount);
+								if (myBalance != null && myBalance.compareTo(sendTokenAmount) > 0) {
+									String privateKey = user.getPrivatekey();
+									if (privateKey != null && !privateKey.isEmpty()) {
+										privateKey = privateKey.substring(2, privateKey.length());
+									}
+									String result = WebAPICall.transferToken(user.getBcaddress(), privateKey, toaddress, convertToFullDecimal(tokenamount), tokenaddress);
+									if (result != null) {
+										if (!result.contains("Error:")) {
+											TransactionLog transactionLog = new TransactionLog();
+											transactionLog.setTransactiondate(new Date());
+											transactionLog.setFromaddress(user.getBcaddress());
+											transactionLog.setToaddress(toaddress);
+											transactionLog.setAmount(tokenamount);
+											transactionLog.setStatus(true);
+											transactionLog.setToken(token);
+											transactionLog.setReferencenumber(result);
+											transactionLog.setType("Token Transaction");
+											transactionLogService.addTransactionLog(transactionLog);
+											model.addAttribute("successmsg", "Successfully Transferred Token!");
+											return new ModelAndView("redirect:/sendtoken?refnumber=" + tokenid);
+										} else {
+											model.addAttribute("errormsg", result);
+											return new ModelAndView("redirect:/sendtoken?refnumber=" + tokenid);
+										}
+										
 									} else {
-										model.addAttribute("errormsg", result);
+										model.addAttribute("errormsg", "Could not transfer token. Please try again.");
 										return new ModelAndView("redirect:/sendtoken?refnumber=" + tokenid);
 									}
-									
 								} else {
-									model.addAttribute("errormsg", "Could not transfer token. Please try again.");
+									model.addAttribute("errormsg", "Insufficient token!");
 									return new ModelAndView("redirect:/sendtoken?refnumber=" + tokenid);
 								}
 							} else {
-								model.addAttribute("errormsg", "Insufficient token!");
-								return new ModelAndView("redirect:/sendtoken?refnumber=" + tokenid);
+								model.addAttribute("errormsg", "Token is freezed, please try again!.");
+								return new ModelAndView("redirect:/tokens");
 							}
 						} else {
 							model.addAttribute("errormsg", "Invalid Token, Please try again.");

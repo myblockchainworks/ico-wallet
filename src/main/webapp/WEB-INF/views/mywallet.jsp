@@ -159,12 +159,16 @@
 		                 	</div>
 		                 	<div class="panel-body">
 			                 	<c:forEach items="${userTokens}" var="token">
+			                 		<c:set var="count" value="${count + 1}" scope="page"/>
 				                 	<div class="form-group col-lg-12">
 										<div class="col-sm-4">
-											<label>${ token.token.name }</label>
+											<label style="padding-top: 10px;">${ token.token.name }</label>
 										</div>
-										<div class='col-sm-6'>
-											<span>${token.balance} ${ token.token.symbol }</span>
+										<div class='col-sm-2'>
+											<label style="padding-top: 10px;">${token.balance} ${ token.token.symbol } </label>
+										</div>
+										<div class="col-sm-1">
+											<span class="freezeicon${count}"><script>showFreezeIcon('<c:out value='${token.active}'/>', 'freezeicon' + '<c:out value='${count}'/>')</script></span>
 										</div>
 									</div>
 								</c:forEach>
