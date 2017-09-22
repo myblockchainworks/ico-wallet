@@ -39,7 +39,7 @@ public interface WEBAPI {
 	
 	static String CREATETOKEN = "createToken";
 	
-	static String CREATETOKEN_DATA = "{  \"_name\": \"PARAM1\", \"_symbol\": \"PARAM2\", \"_decimals\": PARAM3, \"_initialSupply\": PARAM4, \"_tokenPrice\" : PARAM5, \"_tokenOwner\" : \"PARAM6\", \"_startTime\" : PARAM7, \"_endTime\" : PARAM8}";
+	static String CREATETOKEN_DATA = "{  \"_name\": \"PARAM1\", \"_symbol\": \"PARAM2\", \"_crowdsalePercentage\": PARAM3, \"_initialSupply\": PARAM4, \"_tokenPrice\" : PARAM5, \"_tokenOwner\" : \"PARAM6\", \"_startTime\" : PARAM7, \"_endTime\" : PARAM8}";
 	
 	static String BUYTOKEN = "buyToken";
 	
@@ -55,6 +55,8 @@ public interface WEBAPI {
 	
 	static String ISTOKENACTIVE = "isTokenActive";
 	
+	static String ISCROWDSALEACTIVE = "isCrowdsaleActive";
+	
 	static String INCREASETOKENSUPPLY = "increaseTokenSupply";
 	
 	static String INCREASETOKENSUPPLY_DATA = "{  \"_tokenAddress\": \"PARAM1\", \"_additionalSupply\" : PARAM2 }";
@@ -62,5 +64,17 @@ public interface WEBAPI {
 	static String FREEZEORUNFREEZETOKEN = "freezeOrUnfreezeToken";
 	
 	static String FREEZEORUNFREEZETOKEN_DATA = "{  \"_tokenAddress\": \"PARAM1\", \"_active\" : PARAM2 }";
+	
+	static String PAUSEORRESUMECROWDSALE = "pauseOrResumeCrowdsale";
+	
+	static String PAUSEORRESUMECROWDSALE_DATA = "{  \"_tokenAddress\": \"PARAM1\", \"_status\" : PARAM2 }";
+	
+	static String CHANGESTARTTIME = "changeStartTime";
+	
+	static String CHANGESTARTTIME_DATA = "{  \"_tokenAddress\": \"PARAM1\", \"_startTime\" : PARAM2 }";
+	
+	static String CHANGEENDTIME = "changeEndTime";
+	
+	static String CHANGEENDTIME_DATA = "{  \"_tokenAddress\": \"PARAM1\", \"_endTime\" : PARAM2 }";
 	
 }

@@ -1,5 +1,12 @@
 
-function formatAndDisplayDate(value, className) {
+function formatAndDisplayDate(value, className, token) {
+	if (value == "") {
+		if (token != undefined)
+			$('.' + className).html('<a href="updateStartTime?refnumber=' + token + '" class="buttontype" style="background-color: #8a6d3b;">Update</a>');
+		else 
+			$('.' + className).html('');
+		return;
+	}
 	if (value.endsWith(".0"))
 		value = value.substring(0, value.length - 2).replace(' ', 'T');
 	var date = new Date(value);
@@ -152,22 +159,29 @@ function sendEtherConfirmation() {
 	}
 }
 
-function showSendAction(token, className, balance, active) {
+function showSendAction(token, className, balance, active, showBuy, isCrowdsaleActive) {
+	var pauseCrowdsale = '';
+	if (showBuy == "true") {
+		if (isCrowdsaleActive == "true") 
+			pauseCrowdsale = '<a style="background-color:#ff9222" onclick="confirmStartCrowdsale(' + token + ', false)" class="buttontype">Pause</a> ';
+		else
+			pauseCrowdsale = '<a style="background-color:#2dbcc4" onclick="confirmStartCrowdsale(' + token + ', true)" class="buttontype">Start</a> ';
+	}
 	var freezeActive = '<a style="background-color:#be0505" onclick="confrimationFreeze(' + token + ', false)" class="buttontype">Freeze</a>';
 	if (active == "false") {
 		freezeActive = '<a style="background-color:#2dbcc4" onclick="confrimationFreeze(' + token + ', true)" class="buttontype">Unfreeze</a>';
 		$('.' + className).html(freezeActive);
 	} else {
 		if (balance > 500000)
-			$('.' + className).html('<a href="sendtoken?refnumber=' + token + '" class="buttontype">Send</a> ' + freezeActive);
+			$('.' + className).html(pauseCrowdsale + ' <a href="sendtoken?refnumber=' + token + '" class="buttontype">Send</a> ' + freezeActive);
 		else 
-			$('.' + className).html('<a href="sendtoken?refnumber=' + token + '" class="buttontype">Send</a> <a style="background-color: #3c763d;" href="increasetoken?refnumber=' + token + '" class="buttontype"> + Supply</a> ' + freezeActive);
+			$('.' + className).html(pauseCrowdsale + '<a href="sendtoken?refnumber=' + token + '" class="buttontype">Send</a> <a style="background-color: #3c763d;" href="increasetoken?refnumber=' + token + '" class="buttontype"> + Supply</a> ' + freezeActive);
 	}
 }
 
-function showSendBuyAction(token, className, showBuy, active) {
+function showSendBuyAction(token, className, showBuy, active, isCrowdsaleActive) {
 	if (active == "true") {
-		if (showBuy == "true")
+		if (showBuy == "true" && isCrowdsaleActive == "true")
 			$('.' + className).html('<a href="sendtoken?refnumber=' + token + '" class="buttontype">Send</a> <a style="background-color: #2dbcc4;" href="buytoken?refnumber=' + token + '" class="buttontype">Buy</a> <a style="background-color:#be0505" href="removetoken?refnumber=' + token + '" class="buttontype">Remove</a>');
 		else 
 			$('.' + className).html('<a href="sendtoken?refnumber=' + token + '" class="buttontype">Send</a> <a style="background-color:#be0505" href="removetoken?refnumber=' + token + '" class="buttontype">Remove</a>');
@@ -180,6 +194,18 @@ function showSendBuyAction(token, className, showBuy, active) {
 function showFreezeIcon(active, className) {
 	if (active == "false") {
 		$('.' + className).html('<img src="resources/images/freeze-icon.png" style="height: 36px;width: 36px;">');
+	}
+}
+
+function confirmStartCrowdsale(referNumber, activeStatus) {
+	if (activeStatus) {
+		if(confirm ("Are you sure you want to start crowdsale?")) {
+			window.location.href = 'startcrowdsale?refnumber=' + referNumber + '&activeStatus=true'
+		}
+	} else {
+		if(confirm ("Are you sure you want to pause crowdsale?")) {
+			window.location.href = 'startcrowdsale?refnumber=' + referNumber + '&activeStatus=false'
+		}
 	}
 }
 

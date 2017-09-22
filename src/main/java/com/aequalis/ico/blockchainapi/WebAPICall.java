@@ -243,6 +243,40 @@ public class WebAPICall {
 		return result;
 	}
 	
+	public static boolean isCrowdsaleActive(String tokenAddress) {
+		boolean result = false;
+		try {
+			URL url = new URL(BLOCKCHAIN_BASE + WEBAPI.ISCROWDSALEACTIVE);
+			HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
+			httpCon.setDoOutput(true);
+			httpCon.setRequestMethod("POST");
+			httpCon.setRequestProperty("Content-Type","application/json");
+			OutputStreamWriter out = new OutputStreamWriter(httpCon.getOutputStream());
+			String data = WEBAPI.FUNDRAISED_DATA.replace("PARAM1", tokenAddress);
+			out.write(data);
+			out.close();
+		  
+			BufferedReader br;
+			if (200 <= httpCon.getResponseCode() && httpCon.getResponseCode() <= 299) {
+				br = new BufferedReader(new InputStreamReader((httpCon.getInputStream())));
+				StringBuilder sb = new StringBuilder();
+				String output;
+				while ((output = br.readLine()) != null) {
+					sb.append(output);
+				}
+				
+				JSONObject json = new JSONObject(sb.toString());
+				if(json.has("result"))
+					result = json.getBoolean("result");
+			}
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
 	
 	public static UserDTO createAccount(String passcode) {
 		UserDTO user = null;
@@ -387,6 +421,111 @@ public class WebAPICall {
 		return transaction;
 	}
 	
+	public static String pauseOrResumeCrowdsale(String tokenAddress, String status) {
+		String transaction = null;
+		try {
+			URL url = new URL(BLOCKCHAIN_BASE + WEBAPI.PAUSEORRESUMECROWDSALE);
+			HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
+			httpCon.setDoOutput(true);
+			httpCon.setRequestMethod("POST");
+			httpCon.setRequestProperty("Content-Type","application/json");
+			OutputStreamWriter out = new OutputStreamWriter(httpCon.getOutputStream());
+			String data = WEBAPI.PAUSEORRESUMECROWDSALE_DATA.replace("PARAM1", tokenAddress).replace("PARAM2", status);
+			out.write(data);
+			out.close();
+		  
+			BufferedReader br;
+			if (200 <= httpCon.getResponseCode() && httpCon.getResponseCode() <= 299) {
+				br = new BufferedReader(new InputStreamReader((httpCon.getInputStream())));
+				StringBuilder sb = new StringBuilder();
+				String output;
+				while ((output = br.readLine()) != null) {
+					sb.append(output);
+				}
+				
+				JSONObject json = new JSONObject(sb.toString());
+				if(json.has("transaction")) {
+					transaction = json.getString("transaction");
+				}
+			}
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return transaction;
+	}
+	
+	public static String changeStartTime(String tokenAddress, String startTime) {
+		String transaction = null;
+		try {
+			URL url = new URL(BLOCKCHAIN_BASE + WEBAPI.CHANGESTARTTIME);
+			HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
+			httpCon.setDoOutput(true);
+			httpCon.setRequestMethod("POST");
+			httpCon.setRequestProperty("Content-Type","application/json");
+			OutputStreamWriter out = new OutputStreamWriter(httpCon.getOutputStream());
+			String data = WEBAPI.CHANGESTARTTIME_DATA.replace("PARAM1", tokenAddress).replace("PARAM2", startTime);
+			out.write(data);
+			out.close();
+		  
+			BufferedReader br;
+			if (200 <= httpCon.getResponseCode() && httpCon.getResponseCode() <= 299) {
+				br = new BufferedReader(new InputStreamReader((httpCon.getInputStream())));
+				StringBuilder sb = new StringBuilder();
+				String output;
+				while ((output = br.readLine()) != null) {
+					sb.append(output);
+				}
+				
+				JSONObject json = new JSONObject(sb.toString());
+				if(json.has("transaction")) {
+					transaction = json.getString("transaction");
+				}
+			}
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return transaction;
+	}
+	
+	public static String changeEndTime(String tokenAddress, String endTime) {
+		String transaction = null;
+		try {
+			URL url = new URL(BLOCKCHAIN_BASE + WEBAPI.CHANGEENDTIME);
+			HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
+			httpCon.setDoOutput(true);
+			httpCon.setRequestMethod("POST");
+			httpCon.setRequestProperty("Content-Type","application/json");
+			OutputStreamWriter out = new OutputStreamWriter(httpCon.getOutputStream());
+			String data = WEBAPI.CHANGEENDTIME_DATA.replace("PARAM1", tokenAddress).replace("PARAM2", endTime);
+			out.write(data);
+			out.close();
+		  
+			BufferedReader br;
+			if (200 <= httpCon.getResponseCode() && httpCon.getResponseCode() <= 299) {
+				br = new BufferedReader(new InputStreamReader((httpCon.getInputStream())));
+				StringBuilder sb = new StringBuilder();
+				String output;
+				while ((output = br.readLine()) != null) {
+					sb.append(output);
+				}
+				
+				JSONObject json = new JSONObject(sb.toString());
+				if(json.has("transaction")) {
+					transaction = json.getString("transaction");
+				}
+			}
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return transaction;
+	}
+	
 	public static String transferToken(String fromAddress, String privateKey, String toAddress, String amount, String tokenAddress) {
 		String response = null;
 		try {
@@ -430,7 +569,7 @@ public class WebAPICall {
 		return response;
 	}
 	
-	public static String createToken(String name, String symbol, String decimals, String initialSupply, String tokenPrice, String tokenOwner, String startTime, String endTime) {
+	public static String createToken(String name, String symbol, String crowdsalePercentage, String initialSupply, String tokenPrice, String tokenOwner, String startTime, String endTime) {
 		String response = null;
 		try {
 			URL url = new URL(BLOCKCHAIN_BASE + WEBAPI.CREATETOKEN);
@@ -439,7 +578,7 @@ public class WebAPICall {
 			httpCon.setRequestMethod("POST");
 			httpCon.setRequestProperty("Content-Type","application/json");
 			OutputStreamWriter out = new OutputStreamWriter(httpCon.getOutputStream());
-			String data = WEBAPI.CREATETOKEN_DATA.replace("PARAM1", name).replace("PARAM2", symbol).replace("PARAM3", decimals).replace("PARAM4", initialSupply).replace("PARAM5", tokenPrice).replace("PARAM6", tokenOwner).replace("PARAM7", startTime).replace("PARAM8", endTime);
+			String data = WEBAPI.CREATETOKEN_DATA.replace("PARAM1", name).replace("PARAM2", symbol).replace("PARAM3", crowdsalePercentage).replace("PARAM4", initialSupply).replace("PARAM5", tokenPrice).replace("PARAM6", tokenOwner).replace("PARAM7", startTime).replace("PARAM8", endTime);
 			out.write(data);
 			out.close();
 		  

@@ -129,18 +129,19 @@
 											placeholder="e.g., Test Token" class="form-control" autofocus required>
 
 									</div>
-									<div class="col-sm-6">
+									<div class="col-sm-3">
 										<label>Symbol</label> <input type="text" id="tokenSymbol" name="tokenSymbol"
 											placeholder="e.g., TTT" class="form-control" required>
 
 									</div>
+									<div class="col-sm-3">
+										<label>Crowdsale Percentage</label> <input type="number" id="crowdsale" name="crowdsale" min="1" max="100"
+											placeholder="e.g., 80" class="form-control" required>
+									</div>
 								</div>
 								<div class="form-group">
 
-									<div class="col-sm-4"  style="display: none">
-										<label>Decimals</label> <input type="number" id="decimals" name="decimals" value="18"
-											placeholder="e.g., 8" class="form-control" required>
-									</div>
+									
 									<div class='col-sm-3'>
 										<label>Initial Supply</label>
 										 <input type="number" id="initialSupply" name="initialSupply"
@@ -152,8 +153,8 @@
 											placeholder="e.g., 100 (1 ETH = 100 Token)" class="form-control" required>
 									</div>
 									<div class='col-sm-3'>
-										<label>Crowdsale Start Time</label>
-										<input type="datetime-local" id="launchDate" name="startTime" class="form-control" required></input>
+										<label>Crowdsale Start Time (optional)</label>
+										<input type="datetime-local" id="launchDate" name="startTime" class="form-control"></input>
 									</div>
 									
 									<div class='col-sm-3'>

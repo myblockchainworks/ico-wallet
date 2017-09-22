@@ -38,8 +38,8 @@ public class Token  implements Serializable {
 	@Column(name = "symbol")
 	private String symbol;
 	
-	@Column(name = "decimals")
-	private Integer decimals;
+	@Column(name = "crowdsalepercentage")
+	private Integer crowdsalepercentage;
 	
 	@Column(name = "initialsupply") 
 	private Long initialsupply;
@@ -109,17 +109,17 @@ public class Token  implements Serializable {
 	}
 
 	/**
-	 * @return the decimals
+	 * @return the crowdsalepercentage
 	 */
-	public Integer getDecimals() {
-		return decimals;
+	public Integer getCrowdsalepercentage() {
+		return crowdsalepercentage;
 	}
 
 	/**
-	 * @param decimals the decimals to set
+	 * @param crowdsalepercentage the crowdsalepercentage to set
 	 */
-	public void setDecimals(Integer decimals) {
-		this.decimals = decimals;
+	public void setCrowdsalepercentage(Integer crowdsalepercentage) {
+		this.crowdsalepercentage = crowdsalepercentage;
 	}
 
 	/**
@@ -225,9 +225,10 @@ public class Token  implements Serializable {
 	 */
 	@Override
 	public String toString() {
-		return "Token [tokenid=" + tokenid + ", name=" + name + ", symbol=" + symbol + ", decimals=" + decimals
-				+ ", initialsupply=" + initialsupply + ", tokenprice=" + tokenprice + ", starttime=" + starttime
-				+ ", endtime=" + endtime + ", user=" + user + ", address=" + address + ", createdon=" + createdon + "]";
+		return "Token [tokenid=" + tokenid + ", name=" + name + ", symbol=" + symbol + ", crowdsalepercentage="
+				+ crowdsalepercentage + ", initialsupply=" + initialsupply + ", tokenprice=" + tokenprice
+				+ ", starttime=" + starttime + ", endtime=" + endtime + ", user=" + user + ", address=" + address
+				+ ", createdon=" + createdon + "]";
 	}
 	
 }

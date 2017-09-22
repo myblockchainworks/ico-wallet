@@ -132,7 +132,7 @@
 										<th>Start Time</th>
 										<th>End Time</th>
 										<th>Fund Raised</th>
-										<th style="min-width: 175px;">Action</th>
+										<th style="min-width: 210px;">Action</th>
 									</tr>
 									<c:set var="count" value="0" scope="page" />
 									<c:forEach items="${myTokens}" var="token">
@@ -144,10 +144,10 @@
 											<td>${token.token.name} (${token.token.symbol})</td>
 											<td>${token.token.tokenprice} ${token.token.symbol}</td>
 											<td>${token.balance}</td>
-											<td class="starttime${count}"><script>formatAndDisplayDate('<c:out value='${token.token.starttime}'/>', 'starttime' + '<c:out value='${count}'/>');</script></td>
+											<td class="starttime${count}"><script>formatAndDisplayDate('<c:out value='${token.token.starttime}'/>', 'starttime' + '<c:out value='${count}'/>', '<c:out value='${token.token.tokenid}'/>');</script></td>
 											<td class="endtime${count}"><script>formatAndDisplayDate('<c:out value='${token.token.endtime}'/>', 'endtime' + '<c:out value='${count}'/>');</script></td>
 											<td>${token.fundRaised} ETH </td>
-											<td class="sendtoken${count}"><script>showSendAction('<c:out value='${token.token.tokenid}'/>', 'sendtoken' + '<c:out value='${count}'/>', '<c:out value='${token.balance}'/>', '<c:out value='${token.active}'/>')</script></td>
+											<td class="sendtoken${count}"><script>showSendAction('<c:out value='${token.token.tokenid}'/>', 'sendtoken' + '<c:out value='${count}'/>', '<c:out value='${token.balance}'/>', '<c:out value='${token.active}'/>', '<c:out value='${token.showBuy}'/>', '<c:out value='${token.crowdsaleActive}'/>')</script></td>
 										</tr>
 									</c:forEach>
 								</table>
@@ -185,7 +185,7 @@
 											<td>${token.balance}</td>
 											<td class="ostarttime${count}"><script>formatAndDisplayDate('<c:out value='${token.token.starttime}'/>', 'ostarttime' + '<c:out value='${count}'/>');</script></td>
 											<td class="oendtime${count}"><script>formatAndDisplayDate('<c:out value='${token.token.endtime}'/>', 'oendtime' + '<c:out value='${count}'/>');</script></td>
-											<td class="sendbuytoken${count}"><script>showSendBuyAction('<c:out value='${token.token.tokenid}'/>', 'sendbuytoken' + '<c:out value='${count}'/>', '<c:out value='${token.showBuy}'/>', '<c:out value='${token.active}'/>')</script>
+											<td class="sendbuytoken${count}"><script>showSendBuyAction('<c:out value='${token.token.tokenid}'/>', 'sendbuytoken' + '<c:out value='${count}'/>', '<c:out value='${token.showBuy}'/>', '<c:out value='${token.active}'/>', '<c:out value='${token.crowdsaleActive}'/>')</script>
 										</tr>
 									</c:forEach>
 								</table>

@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.UUID;
-import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -315,13 +314,13 @@ public class HomeController {
 			for (UserToken userToken : userTokens) {
 				userToken.setBalance(convertToDecimal(WebAPICall.myTokenBalance(user.getBcaddress(), userToken.getToken().getAddress())));
 				userToken.setActive(WebAPICall.isTokenActive(userToken.getToken().getAddress()));
+				userToken.setCrowdsaleActive(WebAPICall.isCrowdsaleActive(userToken.getToken().getAddress()));
+				if (userToken.getToken().getStarttime() != null && userToken.getToken().getStarttime().before(now) && userToken.getToken().getEndtime().after(now)) 
+					userToken.setShowBuy(true);
 				if (userToken.getToken().getUser().getUserid() == user.getUserid()) {
 					userToken.setFundRaised(getFunRaised(userToken.getToken().getAddress()).toString()); // .setScale(2, BigDecimal.ROUND_UP)
 					myTokens.add(userToken);
 				} else {
-					if (userToken.getToken().getStarttime().before(now) && userToken.getToken().getEndtime().after(now)) 
-						userToken.setShowBuy(true);
-					
 					otherTokens.add(userToken);
 				}
 			}
@@ -368,6 +367,33 @@ public class HomeController {
 		return "index";
 	}
 	
+	@RequestMapping(value = "/startcrowdsale", method = RequestMethod.GET)
+	public String startcrowdsaleScreen(Model model, HttpServletRequest httpServletRequest) {
+	    
+		HttpSession session = getSession();
+		Object userId = session.getAttribute("loginUser");
+		
+		String refnumber = httpServletRequest.getParameter("refnumber");
+		String active = httpServletRequest.getParameter("activeStatus");
+		
+		if(userId != null) {
+			Token token = tokenService.findByTokenid(Long.parseLong(refnumber));
+			if (token != null) {
+				String result = WebAPICall.pauseOrResumeCrowdsale(token.getAddress(), active);
+				if (result != null)
+					if (active.equals("false"))
+						return "redirect:tokens?successmsg=Successfully Paused Crowdsale!";
+					else
+						return "redirect:tokens?successmsg=Successfully Started Crowdsale!";
+				else
+					return "redirect:tokens?errormsg=Could not process your request, please try again!";
+			} else {
+				return "index";
+			}
+		}
+		
+		return "index";
+	}
 	
 	@RequestMapping(value = "/freezetoken", method = RequestMethod.GET)
 	public String freezetokenScreen(Model model, HttpServletRequest httpServletRequest) {
@@ -519,6 +545,46 @@ public class HomeController {
 					model.addAttribute("balance", convertToDecimal(balance));
 					model.addAttribute("currentUser", user);
 					return "sendtoken";
+				} else {
+					return "redirect:tokens?errormsg=Token is freezed, please try again!";
+				}
+				
+			} else {
+				return "index";
+			}
+		}
+		
+		return "index";
+	}
+	
+	
+	@RequestMapping(value = "/updateStartTime", method = RequestMethod.GET)
+	public String updateStartTimeScreen(Model model, HttpServletRequest httpServletRequest) {
+	    
+		String refnumber = httpServletRequest.getParameter("refnumber");
+		
+		HttpSession session = getSession();
+		Object userId = session.getAttribute("loginUser");
+		if(userId != null) {
+			Token token = tokenService.findByTokenid(Long.parseLong(refnumber));
+			if (token != null) {
+				boolean active = WebAPICall.isTokenActive(token.getAddress());
+				if (active) {
+					User user = userService.findByUserid(Long.parseLong(userId.toString()));
+					user.setTokenBalance(WebAPICall.myTokenBalance(user.getBcaddress(), ""));
+					String balance = WebAPICall.myTokenBalance(user.getBcaddress(), token.getAddress());
+					model.addAttribute("tokenName", token.getName());
+					model.addAttribute("tokenId", token.getTokenid());
+					model.addAttribute("tokenAddress", token.getAddress());
+					String endTime = "";
+					if (token.getEndtime() != null) {
+						endTime = token.getEndtime().toString();
+						endTime = endTime.substring(0, 16).replace(" ", "T");
+					}
+					model.addAttribute("endTime", endTime);
+					model.addAttribute("balance", convertToDecimal(balance));
+					model.addAttribute("currentUser", user);
+					return "updateStartTime";
 				} else {
 					return "redirect:tokens?errormsg=Token is freezed, please try again!";
 				}
@@ -825,7 +891,7 @@ public class HomeController {
 	public ModelAndView createNewToken(Model model, HttpServletRequest httpServletRequest) {
 		String tokenName = httpServletRequest.getParameter("tokenName");
 		String tokenSymbol = httpServletRequest.getParameter("tokenSymbol");
-		String decimals = httpServletRequest.getParameter("decimals");
+		String crowdsale = httpServletRequest.getParameter("crowdsale");
 		String initialSupply = httpServletRequest.getParameter("initialSupply");
 		String tokenPrice = httpServletRequest.getParameter("tokenPrice");
 		String startDate = httpServletRequest.getParameter("startTime");
@@ -834,24 +900,25 @@ public class HomeController {
 		long startTime = 0;
 		long endTime = 0;
 		
-		Date startdate;
-		Date enddate;
+		Date startdate = null;
+		Date enddate = null;
 		
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-			startdate = sdf.parse(startDate.replace("T", " "));
-			startTime = startdate.getTime();
-			
 			enddate = sdf.parse(endDate.replace("T", " "));
 			endTime = enddate.getTime();
 			
-			Date now = new Date();
-			if (startdate.before(now)) {
-				model.addAttribute("errormsg", "Crowdsale start time should be in future time!");
-				return new ModelAndView("redirect:/newtoken");
-			} else if (enddate.before(startdate)) {
-				model.addAttribute("errormsg", "Crowdsale end time should be after start time!");
-				return new ModelAndView("redirect:/newtoken");
+			if (startDate != null && !startDate.isEmpty()) {
+				startdate = sdf.parse(startDate.replace("T", " "));
+				startTime = startdate.getTime();
+				Date now = new Date();
+				if (startdate.before(now)) {
+					model.addAttribute("errormsg", "Crowdsale start time should be in future time!");
+					return new ModelAndView("redirect:/newtoken");
+				} else if (enddate.before(startdate)) {
+					model.addAttribute("errormsg", "Crowdsale end time should be after start time!");
+					return new ModelAndView("redirect:/newtoken");
+				}
 			}
 		} catch (ParseException e) {
 			e.printStackTrace();
@@ -869,12 +936,12 @@ public class HomeController {
 			Token token = tokenService.findByNameAndSymbol(tokenName, tokenSymbol);
 			if (token == null) {
 				
-				String tokenAddress = WebAPICall.createToken(tokenName, tokenSymbol, decimals, convertToFullDecimal(initialSupply), tokenPrice, user.getBcaddress(), "" + startTime, "" + endTime);
+				String tokenAddress = WebAPICall.createToken(tokenName, tokenSymbol, crowdsale, initialSupply, tokenPrice, user.getBcaddress(), "" + startTime, "" + endTime);
 				if (tokenAddress != null && tokenAddress.startsWith("0x")) {
 					token = new Token();
 					token.setName(tokenName);
 					token.setSymbol(tokenSymbol);
-					token.setDecimals(Integer.parseInt(decimals));
+					token.setCrowdsalepercentage(Integer.parseInt(crowdsale));
 					token.setInitialsupply(Long.parseLong(initialSupply));
 					token.setTokenprice(Integer.parseInt(tokenPrice));
 					token.setUser(user);
@@ -1023,6 +1090,72 @@ public class HomeController {
 					model.addAttribute("errormsg", "Invalid To Address. Please try again.");
 					return new ModelAndView("redirect:/sendtoken?refnumber=" + tokenid);
 				}
+			}
+		}
+		
+		return new ModelAndView("redirect:/index");
+	}
+	
+	@RequestMapping(value = "/updateTokenStartTime", method = RequestMethod.POST)
+	public ModelAndView updateTokenStartTime(Model model, HttpServletRequest httpServletRequest) {
+		String launchDate = httpServletRequest.getParameter("launchDate");
+		String tokenid = httpServletRequest.getParameter("tokenid");
+		String tokenaddress = httpServletRequest.getParameter("tokenaddress");
+		HttpSession session = getSession();
+		Object userId = session.getAttribute("loginUser");
+		
+		if(userId != null) {
+			
+			if (launchDate != null && !launchDate.isEmpty()) {
+				Token token = tokenService.findByAddress(tokenaddress);
+				if (token != null) {
+					boolean active = WebAPICall.isTokenActive(token.getAddress());
+					if (active) {
+						long startTime = 0;
+						Date startdate = null;
+						try {
+							SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+							Date enddate = token.getEndtime();
+							
+							startdate = sdf.parse(launchDate.replace("T", " "));
+							startTime = startdate.getTime();
+							Date now = new Date();
+							
+							if (startdate.before(now)) {
+								model.addAttribute("errormsg", "Crowdsale start time should be in future time!");
+								return new ModelAndView("redirect:/updateStartTime?refnumber=" + tokenid);
+							} else if (enddate.before(startdate)) {
+								model.addAttribute("errormsg", "Crowdsale start time should be before end time!");
+								return new ModelAndView("redirect:/updateStartTime?refnumber=" + tokenid);
+							}
+						} catch (ParseException e) {
+							e.printStackTrace();
+							model.addAttribute("errormsg", "Crowdsale start time issue, please contract admin!");
+							return new ModelAndView("redirect:/updateStartTime?refnumber=" + tokenid);
+						}
+						
+						String result = WebAPICall.changeStartTime(tokenaddress, "" + startTime);
+						if (result != null) {
+							WebAPICall.pauseOrResumeCrowdsale(tokenaddress, "" + true);
+							token.setStarttime(startdate);
+							tokenService.addToken(token);
+							model.addAttribute("successmsg", "Successfully updated start time!");
+							return new ModelAndView("redirect:/tokens");
+						} else {
+							model.addAttribute("errormsg", "Could not updated start time. Please try again.");
+							return new ModelAndView("redirect:/updateStartTime?refnumber=" + tokenid);
+						}
+					} else {
+						model.addAttribute("errormsg", "Token is freezed, please try again!.");
+						return new ModelAndView("redirect:/tokens");
+					}
+				} else {
+					model.addAttribute("errormsg", "Invalid Token, Please try again.");
+					return new ModelAndView("redirect:/updateStartTime?refnumber=" + tokenid);
+				}
+			} else {
+				model.addAttribute("errormsg", "Start Time is empty, Please try again.");
+				return new ModelAndView("redirect:/updateStartTime?refnumber=" + tokenid);
 			}
 		}
 		
